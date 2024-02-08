@@ -47,3 +47,8 @@ MVVM (Model-View-ViewModel) is an architectural pattern that separates the UI lo
 3. Build and run the application on an Android device or emulator.
 4. Use the search bar to enter keywords and search for images on Imgur.
 5. View the search results and enjoy browsing through the images.
+
+![Screenshot_20240208_210441](https://github.com/atul2188/image-search/assets/143529911/34727dda-4cff-4058-b169-1298f5f3a30b)
+![Screenshot_20240208_210407](https://github.com/atul2188/image-search/assets/143529911/4166a559-3339-4709-a8a2-5cb650f2dddf)
+![Screenshot_20240208_210312](https://github.com/atul2188/image-search/assets/143529911/410ce491-e3ea-45ee-bd98-1035e7b58e73)
+
