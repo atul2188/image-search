@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @Headers("Authorization:CLIENT-ID ${CLIENT_ID}")
+    @Headers("Authorization:CLIENT-ID $CLIENT_ID")
     @GET("gallery/search/top/week")
     suspend fun getQueriedTopOfTheWeekImages(
         @Query("q")
