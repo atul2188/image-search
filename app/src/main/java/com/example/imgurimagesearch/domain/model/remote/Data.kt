@@ -1,4 +1,4 @@
-package com.example.imgurimagesearch.model.network.data
+package com.example.imgurimagesearch.domain.model.remote
 
 data class Data(
     val account_id: Int,

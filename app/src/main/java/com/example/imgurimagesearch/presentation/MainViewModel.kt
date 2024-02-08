@@ -1,10 +1,10 @@
-package com.example.imgurimagesearch.ui
+package com.example.imgurimagesearch.presentation
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.imgurimagesearch.repository.ImageRepository
+import com.example.imgurimagesearch.domain.usecases.SearchImageUseCase
 import com.example.imgurimagesearch.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val imageRepository: ImageRepository
+    private val searchImageUseCase: SearchImageUseCase
 ): ViewModel() {
     val state: MutableState<HomeUiState> = mutableStateOf(HomeUiState())
 
@@ -23,7 +23,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun getImageList(query: String) = viewModelScope.launch {
-        val result = imageRepository.getSearchImages(query)
+        val result = searchImageUseCase.invoke(query)
 
         when(result){
             is Resource.Loading -> {
@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
                 state.value = HomeUiState(error = "Something Went Wrong..!!")
             }
             is Resource.Success -> {
-                result.data?.data?.images?.let {
+                result.data?.let {
                     state.value = HomeUiState(data = it)
                 }
             }

@@ -1,7 +1,9 @@
 package com.example.imgurimagesearch.di
 
-import com.example.imgurimagesearch.model.network.ApiService
-import com.example.imgurimagesearch.repository.ImageRepository
+import com.example.imgurimagesearch.data.ApiService
+import com.example.imgurimagesearch.data.repository.ImageRepositoryImpl
+import com.example.imgurimagesearch.domain.repository.ImageRepository
+import com.example.imgurimagesearch.domain.usecases.SearchImageUseCase
 import com.example.imgurimagesearch.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -24,8 +26,15 @@ object AppModule {
             .create(ApiService::class.java)
     }
 
+    @Singleton
     @Provides
     fun provideImageRepository(apiService: ApiService) : ImageRepository {
-        return ImageRepository(apiService = apiService)
+        return ImageRepositoryImpl(apiService = apiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSearchImageUseCase(imageRepository: ImageRepository) : SearchImageUseCase{
+        return SearchImageUseCase(imageRepository)
     }
 }
