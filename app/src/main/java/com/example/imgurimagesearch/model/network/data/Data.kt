@@ -1,4 +1,4 @@
-package com.example.imgurimagesearch.data.network.model
+package com.example.imgurimagesearch.model.network.data
 
 data class Data(
     val account_id: Int,
