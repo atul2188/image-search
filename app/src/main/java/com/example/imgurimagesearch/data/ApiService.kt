@@ -4,13 +4,17 @@ import com.example.imgurimagesearch.domain.model.remote.ImgurResponse
 import com.example.imgurimagesearch.util.Constants.CLIENT_ID
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
 
     @Headers("Authorization:CLIENT-ID $CLIENT_ID")
-    @GET("gallery/search/top/week")
+    @GET("gallery/search/top/week/{page}")
     suspend fun getQueriedTopOfTheWeekImages(
+        @Path("page")
+        pageId: Int,
+
         @Query("q")
         query: String,
 

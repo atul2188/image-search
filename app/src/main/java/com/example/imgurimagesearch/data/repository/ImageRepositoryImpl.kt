@@ -1,22 +1,28 @@
 package com.example.imgurimagesearch.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.example.imgurimagesearch.data.ApiService
-import com.example.imgurimagesearch.domain.model.remote.Data
+import com.example.imgurimagesearch.data.ImagePagingSource
+import com.example.imgurimagesearch.domain.model.remote.Image
 import com.example.imgurimagesearch.domain.repository.ImageRepository
-import com.example.imgurimagesearch.util.Resource
-import java.io.IOException
+import kotlinx.coroutines.flow.Flow
 
 class ImageRepositoryImpl(
     private val apiService: ApiService
 ) : ImageRepository {
-    override suspend fun getSearchImages(q: String) : Resource<List<Data>> {
+    override suspend fun getSearchImages(q: String) : Flow<PagingData<Image>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { ImagePagingSource(q, apiService)}
+        ).flow
+    }
 
-        return try {
-            val result = apiService.getQueriedTopOfTheWeekImages(q)
-            Resource.Success(result.data)
-        }
-        catch (e: IOException){
-            Resource.Error(message = e.message.toString())
-        }
+    companion object {
+        const val NETWORK_PAGE_SIZE = 50
     }
 }

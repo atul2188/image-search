@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -16,10 +15,9 @@ object Constants {
     @SuppressLint("WeekBasedYear")
     @RequiresApi(Build.VERSION_CODES.O)
     fun epochToLocalDateTime(epochTime: Long): String {
-        val instant = Instant.ofEpochSecond(epochTime)
+        return Instant.ofEpochSecond(epochTime)
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
             .format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm a"))
-        return instant
     }
 }

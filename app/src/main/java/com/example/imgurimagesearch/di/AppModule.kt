@@ -1,6 +1,7 @@
 package com.example.imgurimagesearch.di
 
 import com.example.imgurimagesearch.data.ApiService
+import com.example.imgurimagesearch.data.ImagePagingSource
 import com.example.imgurimagesearch.data.repository.ImageRepositoryImpl
 import com.example.imgurimagesearch.domain.repository.ImageRepository
 import com.example.imgurimagesearch.domain.usecases.SearchImageUseCase

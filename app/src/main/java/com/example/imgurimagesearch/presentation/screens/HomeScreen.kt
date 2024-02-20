@@ -1,11 +1,9 @@
 package com.example.imgurimagesearch.presentation.screens
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,11 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -38,17 +33,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.imgurimagesearch.domain.model.remote.Image
 import com.example.imgurimagesearch.presentation.Dimens.MediumPadding1
 import com.example.imgurimagesearch.presentation.HomeEvent
 import com.example.imgurimagesearch.presentation.HomeUiState
-import com.example.imgurimagesearch.presentation.common.ImageCardGrid
 import com.example.imgurimagesearch.presentation.common.ImageCardList
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    state: HomeUiState = HomeUiState(isLoading = true),
+    state: HomeUiState = HomeUiState(),
     event: (HomeEvent) -> Unit,
     modifier: Modifier
     ) {
@@ -75,7 +71,7 @@ fun HomeScreen(
                 value = query.value,
                 onValueChange = {
                     query.value = it
-                    event(HomeEvent.getImages(query.value))
+                    event(HomeEvent.GetImages(query.value))
                 },
                 enabled = true,
                 singleLine = true,
@@ -103,7 +99,8 @@ fun HomeScreen(
                 Text(text = "Grid", fontSize = 20.sp)
             }
 
-            if (state.isLoading) {
+            /*
+            if (imagePagingItem.loadState.prepend) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
@@ -113,34 +110,39 @@ fun HomeScreen(
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(modifier = Modifier.align(Alignment.Center), text = state.error)
                 }
+            }*/
+
+            state.images?.let {
+                val imagePagingItem = it.collectAsLazyPagingItems()
+                if (imagePagingItem.itemCount > 0) {
+                    if (checked.value) {
+                        ImagesGridDisplay(imagePagingItem)
+                    }
+                    else {
+                        ImageListDisplay(imagePagingItem)
+                    }
+                }
             }
 
-            if (state.data.isNotEmpty()) {
-                if (checked.value) {
-                    ImagesGridDisplay(state = state)
-                }
-                else {
-                    ImageListDisplay(state = state)
-                }
-            }
 
         }
 
     }
 }
 
+
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ImageListDisplay(state: HomeUiState){
-    LazyColumn(modifier = Modifier.fillMaxSize()
+fun ImageListDisplay(pagingItem: LazyPagingItems<Image>){
+    LazyColumn(modifier = Modifier
+        .fillMaxSize()
         .background(color = MaterialTheme.colorScheme.secondary),
         contentPadding = PaddingValues(16.dp)
     ){
-        state.data.forEach { imageData ->
-            imageData?.images?.let { imageList ->
-                items(imageList){
-                    ImageCardList(image = it)
-                }
+        items(count = pagingItem.itemCount){ it ->
+            pagingItem[it]?.let { image ->
+                ImageCardList(image = image)
             }
         }
     }
@@ -148,16 +150,13 @@ fun ImageListDisplay(state: HomeUiState){
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ImagesGridDisplay(state: HomeUiState){
+fun ImagesGridDisplay(pagingItem: LazyPagingItems<Image>){
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         modifier = Modifier.background(color = MaterialTheme.colorScheme.primary)) {
         //Log.d("HomeScreen", "Data Size is" + state.data.size.toString())
-        state.data.forEach { imageData ->
-            imageData?.images?.let { it ->
-                items(it){
-                    //Log.d("HomeScreen", "URL: " + it.link + " Title: " + it.title)
-                    ImageCardGrid(image = it)
-                }
+        items(count = pagingItem.itemCount){
+            pagingItem[it]?.let { image ->
+                ImageCardList(image = image)
             }
         }
 
